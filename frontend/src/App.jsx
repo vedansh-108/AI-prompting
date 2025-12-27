@@ -15,7 +15,7 @@ function App() {
 
   const safeExpenses = Array.isArray(expenses) ? expenses : [];
 
-  // Fetch expenses + total on load
+  // Fetch expenses and total on load
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,7 +36,7 @@ function App() {
     fetchData();
   }, []);
 
-  // ADD or UPDATE expense
+  // Add or update expense
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -48,7 +48,6 @@ function App() {
 
     try {
       if (editId) {
-        // UPDATE expense
         const res = await axios.put(
           `${API_URL}/api/expenses/${editId}`,
           expenseData
@@ -62,7 +61,6 @@ function App() {
 
         setEditId(null);
       } else {
-        // ADD expense
         const res = await axios.post(
           `${API_URL}/api/expenses`,
           expenseData
@@ -71,7 +69,6 @@ function App() {
         setExpenses((prev) => [...prev, res.data]);
       }
 
-      // Refresh total
       const totalRes = await axios.get(
         `${API_URL}/api/expenses/total`
       );
@@ -149,28 +146,23 @@ function App() {
       <h3>All Expenses</h3>
 
       {safeExpenses.length === 0 && (
-        <p>No expenses added yet.</p>
+        <p className="empty">No expenses added yet.</p>
       )}
 
       {safeExpenses.map((exp) => (
-        <div
-          key={exp._id}
-          style={{ marginBottom: "8px" }}
-        >
-          <strong>{exp.title}</strong> | ₹{exp.amount} |{" "}
-          {exp.date}
-          <button
-            onClick={() => handleEdit(exp)}
-            style={{ marginLeft: "10px" }}
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => handleDelete(exp._id)}
-            style={{ marginLeft: "6px" }}
-          >
-            Delete
-          </button>
+        <div key={exp._id} className="expense-row">
+          <div className="expense-title">{exp.title}</div>
+          <div className="expense-amount">₹{exp.amount}</div>
+          <div className="expense-date">{exp.date}</div>
+
+          <div className="expense-actions">
+            <button onClick={() => handleEdit(exp)}>
+              Edit
+            </button>
+            <button onClick={() => handleDelete(exp._id)}>
+              Delete
+            </button>
+          </div>
         </div>
       ))}
 
